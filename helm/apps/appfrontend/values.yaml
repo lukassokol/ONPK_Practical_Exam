@@ -7,7 +7,7 @@ appbackendUrl: ""
 replicaCount: 1
 
 image:
-  repository: hatcherymokacr.azurecr.io/appfrontend
+  repository: docker.io/lukassokol/appbackend:latest
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
