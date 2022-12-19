@@ -4,7 +4,7 @@ metadata:
   generateName: cd-helm-deploy-appbackend-run-
 spec:
   pipelineRef:
-    name: 3-cd-helm-install-app-pipeline
+    name: cd-helm-deploy-app-pipeline
   podTemplate:
     securityContext:
       fsGroup: 65532
