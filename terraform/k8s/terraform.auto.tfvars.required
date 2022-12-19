@@ -1,0 +1,5 @@
+# --- terraform.auto.tfvars ---
+
+username    = ""
+password    = ""
+tenant_name = ""
