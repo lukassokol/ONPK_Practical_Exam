@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ci-build-push-dockerhub-pipeline
+spec:
+  description: |
+    Pipeline for building app
+  params:
+    - name: git-repo-url
+      type: string
+    - name: image-reference
+      type: string
+  workspaces:
+    - name: shared-data
+    - name: docker-credentials
+  tasks:
+    - name: clone-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: "$(params.git-repo-url)"
+        - name: sparseCheckoutDirectories
+          value: "$(params.app-location)"
+        - name: gitInitImage
+          value: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:latest
+    - name: build-and-push
+      runAfter:
+        - "clone-repository"
+      taskRef:
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-data
+        - name: dockerconfig
+          workspace: docker-credentials
+      params:
+        - name: IMAGE
+          value: "$(params.image-reference)"
+        - name: DOCKERFILE
+          value: "$(params.dockerfile-location)"
+        - name: CONTEXT
+          value: "$(params.app-location)"

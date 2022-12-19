@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: ci-build-push-appfrontend-pipeline-run
+spec:
+  pipelineRef:
+    name: ci-build-push-dockerhub-pipeline
+  podTemplate:
+    securityContext:
+      fsGroup: 65532
+  serviceAccountName: docker-credentials
+  workspaces:
+    - name: shared-dataa
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: docker-credentials
+      secret:
+        secretName: docker-credentials
+  params:
+    - name: git-repo-url
+      value: https://github.com/lukassokol/ONPK_Practical_Exam
+    - name: image-reference
+      value: docker.io/lukassokol/appfrontend:latest
+    - name: dockerfile-location
+      value: apps/appfrontend/Dockerfile
+    - name: app-location
+      value: apps/appfrontend

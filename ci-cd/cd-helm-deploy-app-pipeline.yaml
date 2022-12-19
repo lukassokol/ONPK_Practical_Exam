@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cd-helm-deploy-app-pipeline
+spec:
+  description: |
+    Pipeline for installing app
+  params:
+    - name: git-repo-url
+      type: string
+  workspaces:
+    - name: shared-data
+  tasks:
+    - name: clone-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: "$(params.git-repo-url)"
+        - name: sparseCheckoutDirectories
+          value: "$(params.helm-chart-location)"
+    - name: helm-install-app
+      runAfter:
+        - "clone-repository"
+      taskRef:
+        name: helm-upgrade-from-source
+      workspaces:
+        - name: source
+          workspace: shared-data
+      params:
+        - name: charts_dir
+          value: "$(params.helm-chart-location)"
+        - name: release_version
+          value: 0.1.0
+        - name: release_name
+          value: "$(params.release_name)"
+        - name: values_file
+          value: "values-$(params.release_name).yaml"
+        - name: upgrade_extra_params
+          value: "--create-namespace --dependency-update"
+        - name: release_namespace
+          value: dev

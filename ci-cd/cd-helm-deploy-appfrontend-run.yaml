@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: cd-helm-deploy-appfrontend-run-
+spec:
+  pipelineRef:
+    name: 3-cd-helm-install-app-pipeline
+  podTemplate:
+    securityContext:
+      fsGroup: 65532
+  workspaces:
+    - name: shared-data
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: git-repo-url
+      value: https://github.com/lukassokol/ONPK_Practical_Exam
+    - name: helm-chart-location
+      value: helm/apps/appfrontend
+    - name: release_name
+      value: appfrontend
