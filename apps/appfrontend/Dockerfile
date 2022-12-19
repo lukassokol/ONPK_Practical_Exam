@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM --platform=linux/amd64 node:12-alpine as build
+FROM --platform=linux/amd64 docker.io/node:12-alpine as build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY . ./
 RUN yarn build
 
 # Stage 2
-FROM --platform=linux/amd64 nginx:stable-alpine
+FROM --platform=linux/amd64 docker.io/nginx:stable-alpine
 
 WORKDIR /usr/share/nginx/html
 
